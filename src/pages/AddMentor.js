@@ -1,4 +1,45 @@
+import { useState } from "react";
+import { useHistory } from "react-router-dom";
+
 function AddMentor() {
+  const history = useHistory();
+
+  const [newMentor, setNewMentor] = useState({
+    name: "",
+    email: "",
+    course: "",
+  });
+
+  const { name, email, course } = newMentor;
+
+  const onInputChange = (e) => {
+    // console.log("newMentor", newMentor);
+    setNewMentor({ ...newMentor, [e.target.name]: e.target.value });
+  };
+
+  const onSubmit = (e) => {
+    e.preventDefault();
+    var tmpArr = [];
+    tmpArr.push(newMentor);
+    console.log(tmpArr);
+
+    const url = "http://localhost:4000/mentors/";
+    fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Credentials": true,
+      },
+      body: JSON.stringify(tmpArr),
+    })
+      .then((data) => data.json())
+      .then((data) => {
+        console.log("Success:", data);
+        history.push("/mentors");
+      });
+  };
+
   return (
     <div className="container ">
       <div className="col-md-6 offset-md-3">
@@ -7,37 +48,60 @@ function AddMentor() {
             <h2>Add Mentor</h2>
             <form>
               <div className="form-group mb-3">
-                <label for="mentorname">Name</label>
+                <label>Name</label>
                 <input
                   type="text"
                   className="form-control"
-                  id="mentorname"
-                  name="mentorname"
-                  value=""
+                  id="name"
+                  name="name"
+                  onChange={(e) => onInputChange(e)}
+                  value={name}
                 />
               </div>
               <div className="form-group mb-3">
-                <label for="mentoremail">Email</label>
+                <label>Email</label>
                 <input
                   type="text"
                   className="form-control"
-                  id="mentoremail"
-                  name="mentoremail"
-                  value=""
+                  id="email"
+                  name="email"
+                  onChange={(e) => onInputChange(e)}
+                  value={email}
                 />
               </div>
+              {/* <div className="form-group mb-3">
+                <label>Course</label>
+                <input
+                  type="text"
+                  className="form-control"
+                  id="course"
+                  name="course"
+                  onChange={(e) => onInputChange(e)}
+                  value={course}
+                />
+              </div> */}
               <div className="form-group mb-3">
-                <label for="courseassigned">Course</label>
-                <input
-                  type="text"
-                  className="form-control"
-                  id="courseassigned"
-                  name="courseassigned"
-                  value=""
-                />
+                <label>Course</label>
+                <select
+                  className="form-select"
+                  name="course"
+                  onChange={(e) => onInputChange(e)}
+                >
+                  <option value="none">None</option>
+                  <option value="DADA">DADA</option>
+                  <option value="CMC">CMC</option>
+                  <option value="Transfiguration">Transfiguration</option>
+                  <option value="Herbology">Herbology</option>
+                  <option value="Arithmancy">Arithmancy</option>
+                  <option value="Quidditch">Quidditch</option>
+                </select>
               </div>
-              <button type="submit" className="btn btn-primary">
-                Submit
+              <button
+                type="submit"
+                className="btn btn-primary"
+                onClick={(e) => onSubmit(e)}
+              >
+                Add Mentor
               </button>
             </form>
           </div>

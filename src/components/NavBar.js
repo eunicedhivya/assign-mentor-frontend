@@ -22,6 +22,16 @@ function NavBar() {
                 </NavLink>
               </li>
               <li>
+                <NavLink className="nav-link text-white" to="/students">
+                  Students
+                </NavLink>
+              </li>
+              <li>
+                <NavLink className="nav-link text-white" to="/mentors">
+                  Mentors
+                </NavLink>
+              </li>
+              <li>
                 <NavLink className="nav-link text-white" to="/addstudent">
                   Add Student
                 </NavLink>

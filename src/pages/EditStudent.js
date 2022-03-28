@@ -1,10 +1,10 @@
-import { useState } from "react";
-import { useHistory } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { useParams, useHistory } from "react-router-dom";
 
-function AddStudent() {
+function EditStudent() {
   const history = useHistory();
-
-  const [newStudent, setNewStudent] = useState({
+  const { id } = useParams();
+  const [student, setStudent] = useState({
     name: "",
     email: "",
     course: "",
@@ -12,41 +12,85 @@ function AddStudent() {
     mentor_name: "",
   });
 
-  const { name, email, course } = newStudent;
+  const [mentorList, setMentorList] = useState([]);
+
+  const { name, email, course, mentor_name, mentor_id } = student;
 
   const onInputChange = (e) => {
-    // console.log("newMentor", newMentor);
-    setNewStudent({ ...newStudent, [e.target.name]: e.target.value });
+    console.log(
+      "e.target.name",
+      e.target.name,
+      e.target.options[e.target.selectedIndex].innerHTML
+    );
+    if (e.target.name !== "mentor_id") {
+      setStudent({ ...student, [e.target.name]: e.target.value });
+    } else {
+      if (e.target.value !== "none") {
+        setStudent({
+          ...student,
+          ["mentor_id"]: e.target.value,
+          ["mentor_name"]: e.target.options[e.target.selectedIndex].innerHTML,
+        });
+      } else {
+        setStudent({
+          ...student,
+          ["mentor_id"]: "",
+          ["mentor_name"]: "",
+        });
+      }
+    }
   };
+
+  const url = "http://localhost:4000/students/";
+  const url2 = "http://localhost:4000/mentors/";
+
+  const loadStudent = () => {
+    fetch(url + id, { method: "GET" })
+      .then((data) => data.json())
+      .then((mvs) => setStudent(mvs));
+  };
+
+  useEffect(loadStudent, []);
+
+  const getMentors = () => {
+    fetch(url2, { method: "GET" })
+      .then((data) => data.json())
+      .then((stds) => setMentorList(stds));
+  };
+
+  useEffect(getMentors, []);
 
   const onSubmit = (e) => {
     e.preventDefault();
     var tmpArr = [];
-    tmpArr.push(newStudent);
-    console.log(tmpArr);
+    delete student["_id"];
+    tmpArr.push(student);
+    console.log(JSON.stringify(tmpArr));
 
-    const url = "http://localhost:4000/students/";
-    fetch(url, {
-      method: "POST",
+    fetch(url + id, {
+      method: "PUT",
       headers: {
         "Content-Type": "application/json",
         "Access-Control-Allow-Origin": "*",
         "Access-Control-Allow-Credentials": true,
       },
-      body: JSON.stringify(tmpArr),
+      body: JSON.stringify(student),
     })
       .then((data) => data.json())
       .then((data) => {
         console.log("Success:", data);
-        history.push("/students");
+        history.push("/");
       });
   };
+
+  console.log("mentorList", mentorList);
+
   return (
     <div className="container ">
       <div className="col-md-6 offset-md-3">
         <div className="row justify-content-center">
           <div className="card p-4 mt-5 bg-light">
-            <h2>Add Student</h2>
+            <h2>Edit Student</h2>
             <form>
               <div className="form-group mb-3">
                 <label>Name</label>
@@ -70,7 +114,7 @@ function AddStudent() {
                   value={email}
                 />
               </div>
-              {/* <div className="form-group mb-3">
+              <div className="form-group mb-3">
                 <label>Course</label>
                 <input
                   type="text"
@@ -80,21 +124,23 @@ function AddStudent() {
                   onChange={(e) => onInputChange(e)}
                   value={course}
                 />
-              </div> */}
+              </div>
               <div className="form-group mb-3">
-                <label>Course</label>
+                <label>Mentor</label>
                 <select
                   className="form-select"
-                  name="course"
+                  name="mentor_id"
+                  value={mentor_id}
                   onChange={(e) => onInputChange(e)}
                 >
-                  <option value="none">None</option>
-                  <option value="DADA">DADA</option>
-                  <option value="CMC">CMC</option>
-                  <option value="Transfiguration">Transfiguration</option>
-                  <option value="Herbology">Herbology</option>
-                  <option value="Arithmancy">Arithmancy</option>
-                  <option value="Quidditch">Quidditch</option>
+                  <option value="none">No Mentor</option>
+                  {mentorList.map((mentor) => {
+                    return (
+                      <option key={mentor._id} value={mentor._id}>
+                        {mentor.name}
+                      </option>
+                    );
+                  })}
                 </select>
               </div>
               <button
@@ -112,4 +158,4 @@ function AddStudent() {
   );
 }
 
-export default AddStudent;
+export default EditStudent;

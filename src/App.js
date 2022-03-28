@@ -4,6 +4,11 @@ import { Switch, Route, Link, Redirect, NavLink } from "react-router-dom";
 import NavBar from "./components/NavBar";
 import AddStudent from "./pages/AddStudent";
 import AddMentor from "./pages/AddMentor";
+import Mentors from "./pages/Mentors";
+import Students from "./pages/Students";
+import Home from "./pages/Home";
+import AssignStudents from "./pages/AssignStudents";
+import EditStudent from "./pages/EditStudent";
 
 function App() {
   return (
@@ -12,13 +17,28 @@ function App() {
       <div className="container">
         <Switch>
           <Route path="/" exact>
-            <h2>Home</h2>
+            <Home />
+          </Route>
+          <Route path="/students">
+            <Students />
+          </Route>
+          <Route path="/mentors">
+            <Mentors />
+          </Route>
+          <Route path="/mentors/:id">
+            <Mentors />
           </Route>
           <Route path="/addstudent">
             <AddStudent />
           </Route>
           <Route path="/addmentor">
             <AddMentor />
+          </Route>
+          <Route path="/editstudent/:id">
+            <EditStudent />
+          </Route>
+          <Route path="/assignstudents/:id">
+            <AssignStudents />
           </Route>
         </Switch>
       </div>
