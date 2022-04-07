@@ -44,6 +44,9 @@ function MentorRow({ mentordata, getMentors }) {
         <button
           type="button"
           className="btn btn-outline-info btn-circle btn-sm btn-circle ml-2"
+          onClick={(e) => {
+            history.push("/mentor-details/" + mentordata._id);
+          }}
         >
           <FontAwesomeIcon icon={faEye} />
         </button>

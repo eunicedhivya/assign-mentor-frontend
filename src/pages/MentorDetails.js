@@ -1,7 +1,7 @@
 import { useParams, useHistory } from "react-router-dom";
 import { useState, useEffect } from "react";
 
-function AssignStudents() {
+function MentorDetails() {
   let history = useHistory();
   const [mentorDetails, setMentorDetails] = useState({
     _id: "",
@@ -23,12 +23,19 @@ function AssignStudents() {
   const loadMentorDetail = () => {
     fetch(url + id, { method: "GET" })
       .then((data) => data.json())
-      .then((mvs) => setMentorDetails(mvs));
+      .then((mvs) => {
+        setMentorDetails(mvs);
+      });
   };
 
   useEffect(loadMentorDetail, []);
+  useEffect(() => {
+    fetch(url + id, { method: "GET" })
+      .then((data) => data.json())
+      .then((mvs) => setMentorDetails(mvs));
+  }, []);
 
-  const url2 = "http://localhost:4000/unassignedstudents";
+  const url2 = "http://localhost:4000/students/";
 
   const getStudents = () => {
     fetch(url2, { method: "GET" })
@@ -38,6 +45,12 @@ function AssignStudents() {
 
   useEffect(getStudents, []);
 
+  const fstudentList = studentList.filter((fstudents) => {
+    // console.log("fstudents", fstudents);
+    return fstudents.mentor_id === id;
+  });
+
+  //   console.log(fstudentList);
   const onSubmit = (e) => {
     e.preventDefault();
     const url3 = "http://localhost:4000/students/";
@@ -79,7 +92,7 @@ function AssignStudents() {
   };
 
   const warningText =
-    studentList.length > 0 ? "Assign Students" : "No Students";
+    fstudentList.length > 0 ? "Students Assigned" : "No Students";
 
   return (
     <div className="container">
@@ -116,7 +129,7 @@ function AssignStudents() {
                 <h2>{warningText}</h2>
               </div>
               <div className="card-body">
-                {studentList.map((studentdata) => {
+                {fstudentList.map((studentdata) => {
                   return (
                     <UnassignedStudents
                       key={studentdata._id}
@@ -126,24 +139,6 @@ function AssignStudents() {
                     />
                   );
                 })}
-                {studentList.length > 0 ? (
-                  <button
-                    className="btn btn-primary"
-                    onClick={(e) => {
-                      // console.log(assignList.length, typeof assignList);
-                      if (assignList.length > 0) {
-                        console.log("Students Assigned");
-                        onSubmit(e);
-                      } else {
-                        console.log("Please select and assign students");
-                      }
-                    }}
-                  >
-                    Assign
-                  </button>
-                ) : (
-                  ""
-                )}
               </div>
             </div>
           </div>
@@ -153,7 +148,7 @@ function AssignStudents() {
   );
 }
 
-export default AssignStudents;
+export default MentorDetails;
 
 function UnassignedStudents({ studentdata, assignList, setAssignList }) {
   let existId = assignList.includes(studentdata._id);

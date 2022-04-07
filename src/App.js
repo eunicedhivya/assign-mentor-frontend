@@ -8,6 +8,7 @@ import Mentors from "./pages/Mentors";
 import Students from "./pages/Students";
 import Home from "./pages/Home";
 import AssignStudents from "./pages/AssignStudents";
+import MentorDetails from "./pages/MentorDetails";
 import EditStudent from "./pages/EditStudent";
 
 function App() {
@@ -36,6 +37,9 @@ function App() {
           </Route>
           <Route path="/editstudent/:id">
             <EditStudent />
+          </Route>
+          <Route path="/mentor-details/:id">
+            <MentorDetails />
           </Route>
           <Route path="/assignstudents/:id">
             <AssignStudents />
